@@ -1,21 +1,26 @@
 package AtlantisSinks.movement;
 
+import javax.print.DocFlavor;
+import java.lang.annotation.Target;
 import java.util.Objects;
 
 public class EnemyMovement {
     private MovementType movementType;
     private int speed;
 
-    public EnemyMovement(MovementType movementType, int speed) {
+    private Coordinate coordinate;
+
+    public EnemyMovement(MovementType movementType, int speed, Coordinate coordinate) {
         this.movementType = movementType;
         this.speed = speed;
+        this.coordinat = coordinate;
     }
 
     public MovementType getMovementType() {
         return this.movementType;
     }
 
-    // get the enemy type
+    // get enemy type
     public int getSpeed() {
         if (movementType.equals(MovementType.SLOW)) {
             speed = MovementType.SLOW.speed;
@@ -27,14 +32,25 @@ public class EnemyMovement {
         return speed;
     }
 
-    // check if player in the attacking range of enemy
-    public boolean towardEntity() {
-        return false;
+    // get enemy current coordinate
+    public Coordinate getCoordinate() {
+        return this.coordinate;
     }
 
-    // check if next pixel is possible to move
-    public boolean canMove() {
-        return false;
+    // check if player in the attacking range of enemy (depending on the enemy attacking range)
+    public aimTarget towardEntity(aimTarget target) {
+        int distance = Math.pow((enemyCoordinate.getX() - playCoordinate.getX()), 2) + Math.pow((enemyCoordinate.getY() - playCoordinate.getY()), 2);
+        if (distance <= attackrage) {
+            target = player;
+        } else {
+            target = buildings;
+        }
+        return target;
+    }
+
+    // check if enemy is inside of map bounds
+    public boolean isInMap() {
+        return enemyCoordinate.getX() > 0 && ennemyCoordinate.getX() < map.getWidth() && enemyCoordinate.getY() > 0 && ennemyCoordinate.getY() < map.getHeight();
     }
 
     public String encode() {
@@ -42,7 +58,7 @@ public class EnemyMovement {
     }
 
     public int hashCode() {
-        return Objects.hash(this.movementType);
+        return Objects.hash(this.movementType, this.speed);
     }
 
     public boolean equals(Object object) {
@@ -58,7 +74,11 @@ public class EnemyMovement {
 
         EnemyMovement other = (EnemyMovement) object;
 
-        return false;
+        if (!other.getMovementType().equals(this.getMovementType())) {
+            return false;
+        }
+
+        return other.speed == this.speed;
     }
 
     public String toString() {
