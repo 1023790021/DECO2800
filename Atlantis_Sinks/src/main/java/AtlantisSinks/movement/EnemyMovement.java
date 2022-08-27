@@ -1,23 +1,24 @@
 package AtlantisSinks.movement;
 
-import javax.print.DocFlavor;
-import java.lang.annotation.Target;
 import java.util.Objects;
 
 public class EnemyMovement {
     private MovementType movementType;
     private int speed;
 
+    private EnemyDirection direction;
+
     private Coordinate coordinate;
 
-    public EnemyMovement(MovementType movementType, int speed, Coordinate coordinate) {
+    public EnemyMovement(MovementType movementType, int speed, EnemyDirection direction, Coordinate coordinate) {
         this.movementType = movementType;
         this.speed = speed;
+        this.direction = direction;
         this.coordinat = coordinate;
     }
 
     public MovementType getMovementType() {
-        return this.movementType;
+        return movementType;
     }
 
     // get enemy type
@@ -32,9 +33,14 @@ public class EnemyMovement {
         return speed;
     }
 
+    // get enemy direction
+    public EnemyDirection getDirection() {
+        return direction;
+    }
+
     // get enemy current coordinate
     public Coordinate getCoordinate() {
-        return this.coordinate;
+        return coordinate;
     }
 
     // check if player in the attacking range of enemy (depending on the enemy attacking range)
@@ -53,12 +59,20 @@ public class EnemyMovement {
         return enemyCoordinate.getX() > 0 && ennemyCoordinate.getX() < map.getWidth() && enemyCoordinate.getY() > 0 && ennemyCoordinate.getY() < map.getHeight();
     }
 
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public boolean canMove() {
+        return isInMap();
+    }
+
     public String encode() {
         return String.format("%s%d", this.getMovementType(), this.getSpeed());
     }
 
     public int hashCode() {
-        return Objects.hash(this.movementType, this.speed);
+        return Objects.hash(this.movementType, this.speed, this.direction);
     }
 
     public boolean equals(Object object) {
@@ -76,12 +90,14 @@ public class EnemyMovement {
 
         if (!other.getMovementType().equals(this.getMovementType())) {
             return false;
+        } else if (!other.direction.equals(this.direction)) {
+            return false;
         }
 
         return other.speed == this.speed;
     }
 
     public String toString() {
-        return String.format("%s%d", this.getMovementType(), this.getSpeed());
+        return String.format("%s%d%s", this.getMovementType(), this.getSpeed(), this.direction);
     }
 }
